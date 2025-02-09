@@ -31,5 +31,5 @@ dist-ssr
 frontend/.env
 backend/.env
 
-# Google Cloud credentials
-backend/src/google-translate-credentials.json
+# # Google Cloud credentials
+# backend/src/google-translate-credentials.json
