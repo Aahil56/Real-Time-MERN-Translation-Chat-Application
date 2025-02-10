@@ -1,5 +1,5 @@
 import { useChatStore } from "../store/useChatStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useThemeStore } from "../store/useThemeStore";
 import { toast } from "react-hot-toast";
 
@@ -17,58 +17,63 @@ const ChatContainer = () => {
     selectedUser,
     subscribeToMessages,
     unsubscribeFromMessages,
-    sendMessage,
     translateMessage,
     isTranslating,
   } = useChatStore();
+
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
-  const [messageText, setMessageText] = useState("");
 
   useEffect(() => {
-    getMessages(selectedUser._id);
-    subscribeToMessages();
-    return () => unsubscribeFromMessages();
-  }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+    if (selectedUser?._id) {
+      getMessages(selectedUser._id);
+      subscribeToMessages();
+      return () => unsubscribeFromMessages();
+    }
+  }, [
+    selectedUser?._id,
+    getMessages,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  ]);
 
   useEffect(() => {
-    if (messageEndRef.current && messages) {
+    if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
 
   const handleTranslate = async (text) => {
+    if (!text) return;
+
     try {
-      const result = await translateMessage(text, 'hi');
-      if (!result) {
-        toast.error('Translation failed. Please try again.');
+      console.log("Starting translation for:", text);
+      const translatedText = await translateMessage(text, "hi");
+      console.log("Translation result:", translatedText);
+
+      if (!translatedText) {
+        toast.error("Translation failed");
       }
     } catch (error) {
-      console.error('Translation error in component:', error);
-      toast.error('Failed to translate message');
+      console.error("Translation error:", error);
+      toast.error("Failed to translate message");
     }
   };
 
-  if (isMessagesLoading) {
-    return (
-      <div className="flex-1 flex flex-col overflow-auto">
-        <ChatHeader />
-        <MessageSkeleton />
-        <MessageInput />
-      </div>
-    );
-  }
+  if (!selectedUser) return null;
+  if (isMessagesLoading) return <MessageSkeleton />;
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
       <ChatHeader />
-
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
+        {messages.map((message, idx) => (
           <div
             key={message._id}
-            className={`chat ${message.senderId === authUser._id ? "chat-end" : "chat-start"}`}
-            ref={messageEndRef}
+            className={`chat ${
+              message.senderId === authUser._id ? "chat-end" : "chat-start"
+            }`}
+            ref={idx === messages.length - 1 ? messageEndRef : null}
           >
             <div className="chat-image avatar">
               <div className="size-10 rounded-full border">
@@ -96,27 +101,19 @@ const ChatContainer = () => {
                 />
               )}
               {message.text && (
-                <>
+                <div className="flex flex-col gap-1">
                   <p>{message.text}</p>
-                  <button
-                    onClick={() => handleTranslate(message.text)}
-                    className="translate-btn text-xs bg-opacity-20 bg-white px-2 py-1 rounded hover:bg-opacity-30 transition-all"
-                    disabled={isTranslating}
-                  >
-                    {isTranslating ? 'Translating...' : 'हिंदी में अनुवाद करें'}
-                  </button>
                   {message.translatedText && (
-                    <p className="translated-text text-sm italic opacity-75">
+                    <div className="translated-text text-sm italic mt-1 text-blue-200 bg-opacity-20 bg-blue-900 p-2 rounded">
                       {message.translatedText}
-                    </p>
+                    </div>
                   )}
-                </>
+                </div>
               )}
             </div>
           </div>
         ))}
       </div>
-
       <MessageInput />
     </div>
   );
