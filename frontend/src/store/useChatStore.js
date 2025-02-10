@@ -45,11 +45,8 @@ export const useChatStore = create((set, get) => ({
       // Automatically translate the message after sending
       const translatedMessage = { ...res.data };
       if (translatedMessage.text) {
-        // For sender: If not English, translate to English
-        // For receiver: If English, translate to Hindi
         const translatedText = await get().translateMessage(
-          translatedMessage.text,
-          "auto" // This will let the backend decide the target language
+          translatedMessage.text
         );
         if (translatedText) {
           translatedMessage.translatedText = translatedText;
@@ -75,10 +72,7 @@ export const useChatStore = create((set, get) => ({
 
       // Automatically translate new incoming messages
       if (newMessage.text) {
-        const translatedText = await get().translateMessage(
-          newMessage.text,
-          "auto" // This will let the backend decide the target language
-        );
+        const translatedText = await get().translateMessage(newMessage.text);
         if (translatedText) {
           newMessage.translatedText = translatedText;
         }
@@ -97,14 +91,13 @@ export const useChatStore = create((set, get) => ({
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
 
-  translateMessage: async (text, targetLanguage) => {
+  translateMessage: async (text) => {
     set({ isTranslating: true });
     try {
-      console.log("Sending translation request:", { text, targetLanguage });
+      console.log("Sending translation request:", { text });
 
       const res = await axiosInstance.post("/translate", {
         text,
-        targetLanguage,
       });
 
       console.log("Translation response:", res.data);

@@ -18,8 +18,8 @@ const translate = new Translate({
 
 router.post("/api/translate", async (req, res) => {
   try {
-    const { text, targetLanguage } = req.body;
-    console.log("Translating:", { text, targetLanguage });
+    const { text } = req.body;
+    console.log("Translating:", { text });
 
     if (!text) {
       return res.status(400).json({ error: "Text is required" });
@@ -29,21 +29,30 @@ router.post("/api/translate", async (req, res) => {
     const [detection] = await translate.detect(text);
     console.log("Detected language:", detection.language);
 
-    // If the text is not in English, translate to English
-    // If the text is in English, translate to the target language (if specified)
-    const targetLang =
-      detection.language === "en" ? targetLanguage || "hi" : "en";
+    // Only translate if the source language is not English
+    if (detection.language === "en") {
+      // If text is English, translate to Hindi
+      const [translation] = await translate.translate(text, {
+        from: "en",
+        to: "hi",
+      });
 
-    const [translation] = await translate.translate(text, {
-      from: detection.language,
-      to: targetLang,
-    });
+      res.json({
+        translatedText: translation,
+        detectedLanguage: detection.language,
+      });
+    } else {
+      // If text is not English, translate to English
+      const [translation] = await translate.translate(text, {
+        from: detection.language,
+        to: "en",
+      });
 
-    console.log("Translation result:", translation);
-    res.json({
-      translatedText: translation,
-      detectedLanguage: detection.language,
-    });
+      res.json({
+        translatedText: translation,
+        detectedLanguage: detection.language,
+      });
+    }
   } catch (error) {
     console.error("Translation error details:", error);
     res.status(500).json({
