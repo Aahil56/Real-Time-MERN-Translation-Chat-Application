@@ -34,7 +34,7 @@ router.post("/api/translate", async (req, res) => {
       // If text is English, translate to Hindi
       const [translation] = await translate.translate(text, {
         from: "en",
-        to: "hi",
+        to: "bn",
       });
 
       res.json({
