@@ -33,3 +33,10 @@ backend/.env
 
 # Google Cloud credentials
 backend/src/google-translate-credentials.json
+
+# Sensitive data
+*.key
+*.pem
+*.crt
+*.p12
+*.json
