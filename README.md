@@ -15,11 +15,79 @@ A real-time chat application built using the MERN stack (MongoDB, Express, React
 
 ---
 
+## ⚙️ Getting Started
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Aahil56/Real-Time-MERN-Translation-Chat-Application.git
+   cd Real-Time-MERN-Translation-Chat-Application
+   ```
+
+2. **Setup Backend**
+   ```bash
+   cd server
+   npm install
+   ```
+   Create a `.env` file inside the server directory:
+   ```env
+   PORT=5000
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   TRANSLATION_API_KEY=your_translation_api_key
+   TRANSLATION_API_URL=your_translation_api_url
+   ```
+   Start the backend server:
+   ```bash
+   npm run dev
+   ```
+
+3. **Setup Frontend**
+   ```bash
+   cd client
+   npm install
+   ```
+   Create a `.env` file inside the client directory:
+   ```env
+   REACT_APP_SOCKET_SERVER_URL=http://localhost:5000
+   REACT_APP_TRANSLATION_API_URL=your_translation_api_url
+   REACT_APP_TRANSLATION_API_KEY=your_translation_api_key
+   ```
+   Start the frontend app:
+   ```bash
+   npm start
+   ```
+
+---
+
+## 🧠 How It Works
+
+### User Signup/Login:
+- Users register or log in using email and password.
+- Upon login, a JWT token is generated and used for authentication.
+
+### Language Preference:
+- Users select their preferred language from a list (e.g., English, Spanish, French).
+
+### Sending Messages:
+- When a user sends a message, it is first captured by the backend server.
+
+### Translation:
+- The backend automatically translates the message into the recipient's selected language using a Translation API.
+
+### Real-Time Communication:
+- The translated message is immediately emitted through Socket.io to the recipient in real-time.
+
+### Receiving Messages:
+- The recipient's chatbox shows the translated message without delay.
+
+---
+
 ## 🎥 Demo
 
-[![Watch the demo](https://img.youtube.com/vi/YOUR_VIDEO_ID_HERE/maxresdefault.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE)
+# Watch the Demo!
+[![Watch the demo](https://img.youtube.com/vi/VjnDvlUj1Ls/maxresdefault.jpg)](https://www.youtube.com/watch?v=VjnDvlUj1Ls)
 
-> 📌 Replace `YOUR_VIDEO_ID_HERE` with your actual YouTube video ID after uploading.
+> 📌 Click the link to view the demo: [Watch the demo on YouTube](https://www.youtube.com/watch?v=VjnDvlUj1Ls)
 
 ---
 
